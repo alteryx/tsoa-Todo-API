@@ -67,6 +67,30 @@ export class TasksController extends Controller {
   }
 
   /**
+   * Get the task with the given id.
+   * @taskId The id of the task to get.
+   */
+  @Get("{taskId}")
+  public async getTaskById(
+    @Path() taskId: string,
+    @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
+  ): Promise<ITask> {
+    if (!taskId) {
+      return notFoundResponse(404, {
+        reason: "Please provide a taskId to look for.",
+      });
+    }
+    const task = new TasksService().getTaskById(taskId);
+    if (task) {
+      return task;
+    } else {
+      return notFoundResponse(404, {
+        reason: `A task does not exist with ID: ${taskId}`,
+      });
+    }
+  }
+
+  /**
    * Toggles the completion status of the task with the given id.
    * @taskId The id of the task to toggle.
    */
@@ -74,13 +98,18 @@ export class TasksController extends Controller {
   public async toggleTask(
     @Path() taskId: string,
     @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
-  ): Promise<void> {
+  ): Promise<string> {
     if (!taskId) {
       return notFoundResponse(404, {
         reason: "Please provide a taskId to toggle.",
       });
     }
-    new TasksService().toggleTask(taskId);
+    const success = new TasksService().toggleTask(taskId);
+    if (success) {
+      return `Toggled task with task id: ${taskId}`;
+    } else {
+      return `Could not find task with task id: ${taskId}`;
+    }
   }
 
   /**

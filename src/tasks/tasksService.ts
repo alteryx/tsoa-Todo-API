@@ -37,11 +37,17 @@ export class TasksService {
     TasksService.tasks.filter((item) => item.id !== taskId);
   }
 
+  // Get a task by its id
+  public getTaskById(taskId: string) {
+    return TasksService.tasks.find((item) => item.id === taskId);
+  }
+
   // Toggles a specific task's status
   public toggleTask(taskId: string) {
     const task = TasksService.tasks.find((item) => item.id === taskId);
-    if (task !== undefined) {
+    if (task) {
       task.completed = !task.completed;
+      return true;
     }
   }
 

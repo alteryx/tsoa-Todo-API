@@ -25,11 +25,16 @@ class TasksService {
     deleteTask(taskId) {
         TasksService.tasks.filter((item) => item.id !== taskId);
     }
+    // Get a task by its id
+    getTaskById(taskId) {
+        return TasksService.tasks.find((item) => item.id === taskId);
+    }
     // Toggles a specific task's status
     toggleTask(taskId) {
         const task = TasksService.tasks.find((item) => item.id === taskId);
-        if (task !== undefined) {
+        if (task) {
             task.completed = !task.completed;
+            return true;
         }
     }
     // Toggles All

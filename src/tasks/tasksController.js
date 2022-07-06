@@ -56,6 +56,28 @@ let TasksController = class TasksController extends tsoa_1.Controller {
         });
     }
     /**
+     * Get the task with the given id.
+     * @taskId The id of the task to get.
+     */
+    getTaskById(taskId, notFoundResponse) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!taskId) {
+                return notFoundResponse(404, {
+                    reason: "Please provide a taskId to look for.",
+                });
+            }
+            const task = new tasksService_1.TasksService().getTaskById(taskId);
+            if (task) {
+                return task;
+            }
+            else {
+                return notFoundResponse(404, {
+                    reason: `A task does not exist with ID: ${taskId}`,
+                });
+            }
+        });
+    }
+    /**
      * Toggles the completion status of the task with the given id.
      * @taskId The id of the task to toggle.
      */
@@ -66,7 +88,13 @@ let TasksController = class TasksController extends tsoa_1.Controller {
                     reason: "Please provide a taskId to toggle.",
                 });
             }
-            new tasksService_1.TasksService().toggleTask(taskId);
+            const success = new tasksService_1.TasksService().toggleTask(taskId);
+            if (success) {
+                return `Toggled task with task id: ${taskId}`;
+            }
+            else {
+                return `Could not find task with task id: ${taskId}`;
+            }
         });
     }
     /**
@@ -110,6 +138,11 @@ __decorate([
     __param(0, (0, tsoa_1.Path)()),
     __param(1, (0, tsoa_1.Res)())
 ], TasksController.prototype, "deleteTask", null);
+__decorate([
+    (0, tsoa_1.Get)("{taskId}"),
+    __param(0, (0, tsoa_1.Path)()),
+    __param(1, (0, tsoa_1.Res)())
+], TasksController.prototype, "getTaskById", null);
 __decorate([
     (0, tsoa_1.Put)("/toggle/{taskId}"),
     __param(0, (0, tsoa_1.Path)()),

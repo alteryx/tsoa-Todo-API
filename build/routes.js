@@ -87,6 +87,24 @@ function RegisterRoutes(app) {
         }
     });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.get('/tasks/:taskId', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.getTaskById)), function TasksController_getTaskById(request, response, next) {
+        const args = {
+            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "string" },
+            notFoundResponse: { "in": "res", "name": "404", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "reason": { "dataType": "string", "required": true } } },
+        };
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new tasksController_1.TasksController();
+            const promise = controller.getTaskById.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, undefined, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.put('/tasks/toggle/:taskId', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.toggleTask)), function TasksController_toggleTask(request, response, next) {
         const args = {
             taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "string" },
