@@ -1,66 +1,66 @@
+import {Repository} from "typeorm";
+import {Task, TaskStatus} from "../models/task.entity";
 import {ITask} from "./task.interface";
+import dataSource from "./config";
 
 export type CreateTaskDto = Pick<ITask, "name">;
 
 export class TasksService {
-  private static tasks: ITask[] = [
-    {id: "1", name: "Nest App", completed: false},
-  ];
-
-  // Computes Next Task id
-  private nextTaskId(tasks: ITask[]): string {
-    const maxId = tasks.reduce(
-      (maxId, task) => Math.max(Number(task.id), maxId),
-      -1
-    );
-    return (maxId + 1).toString();
-  }
+  private tasksRepository: Repository<Task> = dataSource.getRepository(Task);
 
   // Gets all tasks
-  public getTasks(): ITask[] {
-    return TasksService.tasks;
+  async getTasks(): Promise<Task[]> {
+    const allTasks = await this.tasksRepository.find();
+    return allTasks;
   }
 
   // Creates a new task
-  public addTask(createTaskParams: CreateTaskDto) {
-    const newTask = {
-      id: this.nextTaskId(TasksService.tasks),
+  async addTask(createTaskParams: CreateTaskDto): Promise<Task> {
+    const fullTask = {
       name: createTaskParams.name,
       completed: false,
     };
-    TasksService.tasks.push(newTask);
-    return "Successfully added task.";
+    const inserted = await this.tasksRepository.save(fullTask);
+    return inserted;
   }
 
   // Deletes a specific task
-  public deleteTask(taskId: string) {
-    TasksService.tasks.filter((item) => item.id !== taskId);
+  async deleteTask(taskId: number) {
+    await this.tasksRepository.delete(taskId);
+  }
+
+  // Deletes all tasks
+  async deleteAllTasks() {
+    const records = await this.getTasks();
+    if (records) {
+      records.forEach((task) => {
+        this.tasksRepository.delete(task.id);
+      });
+    }
   }
 
   // Get a task by its id
-  public getTaskById(taskId: string) {
-    return TasksService.tasks.find((item) => item.id === taskId);
+  async getTaskById(taskId: number) {
+    const task = this.tasksRepository.findOneBy({id: taskId});
+    return task;
   }
 
   // Toggles a specific task's status
-  public toggleTask(taskId: string) {
-    const task = TasksService.tasks.find((item) => item.id === taskId);
-    if (task) {
-      task.completed = !task.completed;
-      return true;
-    }
+  async toggleTask(taskId: number): Promise<boolean> {
+    const _old = await this.tasksRepository.findOneBy({id: taskId});
+    if (!_old || !_old.id) return false;
+    const _new = {..._old, status: TaskStatus.inprogress};
+    await this.tasksRepository.update({id: taskId}, _new);
+    return true;
   }
 
   // Toggles All
-  public toggleAll(setting: string) {
-    if (setting === "1") {
-      TasksService.tasks.forEach((task) => {
-        task.completed = true;
-      });
-    } else if (setting === "0") {
-      TasksService.tasks.forEach((task) => {
-        task.completed = false;
-      });
-    }
+  async toggleAll(status: TaskStatus) {
+    const records = await this.getTasks();
+    records.forEach((task) => {
+      task.status = status;
+      this.tasksRepository.save(task);
+    });
+    return status;
   }
 }

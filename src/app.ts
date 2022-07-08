@@ -1,4 +1,5 @@
 // src/app.ts
+import "reflect-metadata";
 import express, {
   Response as ExResponse,
   Request as ExRequest,
@@ -8,7 +9,7 @@ import bodyParser from "body-parser";
 import {RegisterRoutes} from "../build/routes";
 import {ValidateError} from "tsoa";
 import swaggerUi from "swagger-ui-express";
-
+import dataSource from "./tasks/config";
 export const app = express();
 
 // Use body parser to read sent json payloads

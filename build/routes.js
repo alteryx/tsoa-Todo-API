@@ -9,12 +9,17 @@ const runtime_1 = require("@tsoa/runtime");
 const tasksController_1 = require("./../src/tasks/tasksController");
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 const models = {
-    "ITask": {
+    "TaskStatus": {
+        "dataType": "refEnum",
+        "enums": ["todo", "inprogress", "completed"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Task": {
         "dataType": "refObject",
         "properties": {
-            "id": { "dataType": "string", "required": true },
+            "id": { "dataType": "double", "required": true },
             "name": { "dataType": "string", "required": true },
-            "completed": { "dataType": "boolean", "required": true },
+            "status": { "ref": "TaskStatus", "required": true },
         },
         "additionalProperties": false,
     },
@@ -71,8 +76,7 @@ function RegisterRoutes(app) {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.delete('/tasks/:taskId', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.deleteTask)), function TasksController_deleteTask(request, response, next) {
         const args = {
-            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "string" },
-            notFoundResponse: { "in": "res", "name": "404", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "reason": { "dataType": "string", "required": true } } },
+            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "double" },
         };
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
@@ -87,10 +91,24 @@ function RegisterRoutes(app) {
         }
     });
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    app.delete('/tasks', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.deleteAllTasks)), function TasksController_deleteAllTasks(request, response, next) {
+        const args = {};
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        let validatedArgs = [];
+        try {
+            validatedArgs = getValidatedArgs(args, request, response);
+            const controller = new tasksController_1.TasksController();
+            const promise = controller.deleteAllTasks.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, undefined, next);
+        }
+        catch (err) {
+            return next(err);
+        }
+    });
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.get('/tasks/:taskId', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.getTaskById)), function TasksController_getTaskById(request, response, next) {
         const args = {
-            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "string" },
-            notFoundResponse: { "in": "res", "name": "404", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "reason": { "dataType": "string", "required": true } } },
+            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "double" },
         };
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
@@ -107,8 +125,7 @@ function RegisterRoutes(app) {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.put('/tasks/toggle/:taskId', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.toggleTask)), function TasksController_toggleTask(request, response, next) {
         const args = {
-            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "string" },
-            notFoundResponse: { "in": "res", "name": "404", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "reason": { "dataType": "string", "required": true } } },
+            taskId: { "in": "path", "name": "taskId", "required": true, "dataType": "double" },
         };
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];
@@ -125,8 +142,7 @@ function RegisterRoutes(app) {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     app.put('/tasks/markAll/:setting', ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController)), ...((0, runtime_1.fetchMiddlewares)(tasksController_1.TasksController.prototype.toggleAll)), function TasksController_toggleAll(request, response, next) {
         const args = {
-            setting: { "in": "path", "name": "setting", "required": true, "dataType": "string" },
-            notFoundResponse: { "in": "res", "name": "404", "required": true, "dataType": "nestedObjectLiteral", "nestedProperties": { "reason": { "dataType": "string", "required": true } } },
+            setting: { "in": "path", "name": "setting", "required": true, "ref": "TaskStatus" },
         };
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         let validatedArgs = [];

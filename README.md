@@ -1,8 +1,10 @@
-## Description
+# Todo API - tsoa
 
-[Tsoa](https://github.com/lukeautry/tsoa) framework TypeScript starter repository.
+This repo contains a simple todo API with code to connect to a local Postgres DB using the tsoa framework.
 
 ## Installation
+
+Clone this repository, then run the following command in its directory.
 
 ```bash
 $ npm install
@@ -10,12 +12,13 @@ $ npm install
 
 ## Running the app
 
+You will need a local Postgres server to run this app, which you can easily do by following the instructions [here](https://www.codecademy.com/article/installing-and-using-postgresql-locally).
+
+Once you have the server up and running, run the following command to start your API server listening on port 3000:
+
 ```bash
-# development
 $ npm run build
 $ npm run start
 ```
 
-## Swagger UI
-
-![Swagger UI](/Tsoa-SwaggerUI.png)
+Your API should be all set to go!

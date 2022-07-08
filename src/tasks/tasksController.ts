@@ -13,11 +13,17 @@ import {
   SuccessResponse,
   TsoaResponse,
 } from "tsoa";
+import {Task, TaskStatus} from "../models/task.entity";
 import {ITask} from "./task.interface";
 import {TasksService, CreateTaskDto} from "./tasksService";
 
 @Route("tasks")
 export class TasksController extends Controller {
+  taskService: TasksService;
+  constructor() {
+    super();
+    this.taskService = new TasksService();
+  }
   /**
    * Gets list of all tasks.
    *
@@ -26,12 +32,12 @@ export class TasksController extends Controller {
     {
       id: "0",
       name: "An example task",
-      completed: true,
+      status: TaskStatus.todo,
     },
   ])
   @Get()
-  public async getTasks(): Promise<ITask[]> {
-    return new TasksService().getTasks();
+  public async getTasks(): Promise<Task[] | undefined> {
+    return this.taskService.getTasks();
   }
 
   /**
@@ -44,9 +50,8 @@ export class TasksController extends Controller {
    */
   @Post()
   @SuccessResponse("201", "Created") // Custom success response
-  public async createTask(@Body() requestBody: CreateTaskDto): Promise<string> {
-    this.setStatus(201); // set return status 201
-    return new TasksService().addTask(requestBody);
+  public async createTask(@Body() requestBody: CreateTaskDto): Promise<Task> {
+    return this.taskService.addTask(requestBody);
   }
 
   /**
@@ -54,16 +59,14 @@ export class TasksController extends Controller {
    * @taskId The id of the task to delete.
    */
   @Delete("{taskId}")
-  public async deleteTask(
-    @Path() taskId: string,
-    @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
-  ): Promise<void> {
-    if (!taskId) {
-      return notFoundResponse(404, {
-        reason: "Please provide a taskId to delete.",
-      });
-    }
-    new TasksService().deleteTask(taskId);
+  public async deleteTask(@Path() taskId: number): Promise<void> {
+    this.taskService.deleteTask(taskId);
+  }
+
+  @Delete()
+  public async deleteAllTasks() {
+    this.taskService.deleteAllTasks();
+    return `Deleted all tasks`;
   }
 
   /**
@@ -71,23 +74,9 @@ export class TasksController extends Controller {
    * @taskId The id of the task to get.
    */
   @Get("{taskId}")
-  public async getTaskById(
-    @Path() taskId: string,
-    @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
-  ): Promise<ITask> {
-    if (!taskId) {
-      return notFoundResponse(404, {
-        reason: "Please provide a taskId to look for.",
-      });
-    }
-    const task = new TasksService().getTaskById(taskId);
-    if (task) {
-      return task;
-    } else {
-      return notFoundResponse(404, {
-        reason: `A task does not exist with ID: ${taskId}`,
-      });
-    }
+  public async getTaskById(@Path() taskId: number) {
+    const task = this.taskService.getTaskById(taskId);
+    return task;
   }
 
   /**
@@ -95,21 +84,9 @@ export class TasksController extends Controller {
    * @taskId The id of the task to toggle.
    */
   @Put("/toggle/{taskId}")
-  public async toggleTask(
-    @Path() taskId: string,
-    @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
-  ): Promise<string> {
-    if (!taskId) {
-      return notFoundResponse(404, {
-        reason: "Please provide a taskId to toggle.",
-      });
-    }
-    const success = new TasksService().toggleTask(taskId);
-    if (success) {
-      return `Toggled task with task id: ${taskId}`;
-    } else {
-      return `Could not find task with task id: ${taskId}`;
-    }
+  public async toggleTask(@Path() taskId: number): Promise<boolean> {
+    const success = this.taskService.toggleTask(taskId);
+    return success;
   }
 
   /**
@@ -117,16 +94,7 @@ export class TasksController extends Controller {
    * @taskId The status to toggle to. True = Complete; False = Incomplete.
    */
   @Put("/markAll/{setting}")
-  public async toggleAll(
-    @Path() setting: string,
-    @Res() notFoundResponse: TsoaResponse<404, {reason: string}>
-  ): Promise<void> {
-    if (!setting) {
-      return notFoundResponse(404, {
-        reason:
-          "Please provide a setting to toggle all tasks to: true or false.",
-      });
-    }
-    new TasksService().toggleAll(setting);
+  public async toggleAll(@Path() setting: TaskStatus): Promise<void> {
+    this.taskService.toggleAll(setting);
   }
 }

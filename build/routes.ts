@@ -10,12 +10,17 @@ import * as express from 'express';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "ITask": {
+    "TaskStatus": {
+        "dataType": "refEnum",
+        "enums": ["todo","inprogress","completed"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Task": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"string","required":true},
+            "id": {"dataType":"double","required":true},
             "name": {"dataType":"string","required":true},
-            "completed": {"dataType":"boolean","required":true},
+            "status": {"ref":"TaskStatus","required":true},
         },
         "additionalProperties": false,
     },
@@ -95,8 +100,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function TasksController_deleteTask(request: any, response: any, next: any) {
             const args = {
-                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"string"},
-                    notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -115,14 +119,37 @@ export function RegisterRoutes(app: express.Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.delete('/tasks',
+            ...(fetchMiddlewares<RequestHandler>(TasksController)),
+            ...(fetchMiddlewares<RequestHandler>(TasksController.prototype.deleteAllTasks)),
+
+            function TasksController_deleteAllTasks(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request, response);
+
+                const controller = new TasksController();
+
+
+              const promise = controller.deleteAllTasks.apply(controller, validatedArgs as any);
+              promiseHandler(controller, promise, response, undefined, next);
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         app.get('/tasks/:taskId',
             ...(fetchMiddlewares<RequestHandler>(TasksController)),
             ...(fetchMiddlewares<RequestHandler>(TasksController.prototype.getTaskById)),
 
             function TasksController_getTaskById(request: any, response: any, next: any) {
             const args = {
-                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"string"},
-                    notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -147,8 +174,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function TasksController_toggleTask(request: any, response: any, next: any) {
             const args = {
-                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"string"},
-                    notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+                    taskId: {"in":"path","name":"taskId","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -173,8 +199,7 @@ export function RegisterRoutes(app: express.Router) {
 
             function TasksController_toggleAll(request: any, response: any, next: any) {
             const args = {
-                    setting: {"in":"path","name":"setting","required":true,"dataType":"string"},
-                    notFoundResponse: {"in":"res","name":"404","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"reason":{"dataType":"string","required":true}}},
+                    setting: {"in":"path","name":"setting","required":true,"ref":"TaskStatus"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -6,22 +6,31 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"ITask": {
+			"TaskStatus": {
+				"enum": [
+					"todo",
+					"inprogress",
+					"completed"
+				],
+				"type": "string"
+			},
+			"Task": {
 				"properties": {
 					"id": {
-						"type": "string"
+						"type": "number",
+						"format": "double"
 					},
 					"name": {
 						"type": "string"
 					},
-					"completed": {
-						"type": "boolean"
+					"status": {
+						"$ref": "#/components/schemas/TaskStatus"
 					}
 				},
 				"required": [
 					"id",
 					"name",
-					"completed"
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -64,7 +73,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/ITask"
+										"$ref": "#/components/schemas/Task"
 									},
 									"type": "array"
 								},
@@ -74,7 +83,7 @@
 											{
 												"id": "0",
 												"name": "An example task",
-												"completed": true
+												"status": "todo"
 											}
 										]
 									}
@@ -95,7 +104,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "string"
+									"$ref": "#/components/schemas/Task"
 								},
 								"examples": {
 									"Example 1": {
@@ -119,6 +128,23 @@
 						}
 					}
 				}
+			},
+			"delete": {
+				"operationId": "DeleteAllTasks",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/tasks/{taskId}": {
@@ -127,24 +153,6 @@
 				"responses": {
 					"204": {
 						"description": "No content"
-					},
-					"404": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"reason": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"reason"
-									],
-									"type": "object"
-								}
-							}
-						}
 					}
 				},
 				"description": "Deletes a task given the id.",
@@ -155,7 +163,8 @@
 						"name": "taskId",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
@@ -168,25 +177,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ITask"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"reason": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"reason"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/Task"
 								}
 							}
 						}
@@ -200,7 +191,8 @@
 						"name": "taskId",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
@@ -215,25 +207,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"type": "string"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"reason": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"reason"
-									],
-									"type": "object"
+									"type": "boolean"
 								}
 							}
 						}
@@ -247,7 +221,8 @@
 						"name": "taskId",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]
@@ -259,24 +234,6 @@
 				"responses": {
 					"204": {
 						"description": "No content"
-					},
-					"404": {
-						"description": "",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"reason": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"reason"
-									],
-									"type": "object"
-								}
-							}
-						}
 					}
 				},
 				"description": "Toggles the completion status of all tasks to the given status.",
@@ -287,7 +244,7 @@
 						"name": "setting",
 						"required": true,
 						"schema": {
-							"type": "string"
+							"$ref": "#/components/schemas/TaskStatus"
 						}
 					}
 				]
